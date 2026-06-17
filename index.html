@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Romantic Puzzle</title>
+  <style>
+    body {
+      background: pink;
+      font-family: cursive;
+      text-align: center;
+    }
+    #puzzle {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 2px;
+      margin: 20px auto;
+      width: 306px;
+      border: 5px solid red;
+    }
+    .piece {
+      width: 100px;
+      height: 100px;
+      background-size: 300px 300px;
+      cursor: grab;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 24px;
+      color: crimson;
+      text-shadow: 2px 2px 5px white;
+    }
+  </style>
+</head>
+<body>
+  <h2>Romantic Puzzle for Hellen 💕</h2>
+  <div id="puzzle"></div>
+  <div id="message">Arrange the pieces!</div>
+
+  <script>
+    const puzzle = document.getElementById("puzzle");
+    const message = document.getElementById("message");
+
+    // Use your own photo here
+    const img = "photo.jpg"; // upload this to repo
+
+    // Create 9 pieces
+    let positions = [];
+    for (let i = 0; i < 9; i++) positions.push(i);
+    positions.sort(() => Math.random() - 0.5); // shuffle
+
+    positions.forEach((pos, i) => {
+      const piece = document.createElement("div");
+      piece.className = "piece";
+      piece.style.backgroundImage = `url(${img})`;
+      piece.style.backgroundPosition = 
+        `${-(pos % 3) * 100}px ${-Math.floor(pos / 3) * 100}px`;
+      piece.draggable = true;
+      piece.dataset.pos = pos;
+      puzzle.appendChild(piece);
+    });
+
+    let dragged;
+    puzzle.addEventListener("dragstart", e => dragged = e.target);
+    puzzle.addEventListener("dragover", e => e.preventDefault());
+    puzzle.addEventListener("drop", e => {
+      if (e.target.className === "piece") {
+        let temp = dragged.style.backgroundPosition;
+        dragged.style.backgroundPosition = e.target.style.backgroundPosition;
+        e.target.style.backgroundPosition = temp;
+
+        // Check if solved
+        let solved = true;
+        [...puzzle.children].forEach((piece, i) => {
+          let correctX = -(i % 3) * 100 + "px";
+          let correctY = -Math.floor(i / 3) * 100 + "px";
+          if (piece.style.backgroundPosition !== correctX + " " + correctY) {
+            solved = false;
+          }
+        });
+        if (solved) {
+          message.innerHTML = "💖 Forever Yours, Onesmus 💖";
+          message.style.color = "gold";
+          message.style.fontSize = "28px";
+        }
+      }
+    });
+  </script>
+</body>
+</html>
